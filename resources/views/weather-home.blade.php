@@ -16,8 +16,7 @@
         } = Vue;
         const element = document.getElementById("weather-app");
         const API_KEY = "{{ env('API_KEY') }}";
-        const API_URL_WEATHER = "{{ env('API_URL_WEATHER') }}";
-
+        
         const app = createApp({
             data() {
                 return {
@@ -30,19 +29,36 @@
 
                     let currentCountry = "Bangkok,TH";
                     let limit = 5;
-                    axios.get(`http://api.openweathermap.org/geo/1.0/direct?q=${currentCountry}&limit=${limit}&appid=${API_KEY}`)
+                    axios.get(
+                            `http://api.openweathermap.org/geo/1.0/direct?q=${currentCountry}&limit=${limit}&appid=${API_KEY}`
+                        )
                         .then(res => {
-                            console.log(res)
+                            if (res.status == 200) {
+                                this.getWeather(res.data[0].lat, res.data[0].lon);
+                            }
                         })
                         .catch(err => {
                             console.error(err);
                         });
                 },
+                getWeather(lat, lon) {
+                    axios.get(
+                            `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}`
+                        )
+                        .then(res => {
+                            if (res.status == 200) {
+                                console.log(res.data[0])
+                            }
+                        })
+                        .catch(err => {
+                            console.error(err);
+                        });
+                }
             },
             mounted() {
-                //setInterval(() => {
+                setInterval(() => {
                     this.getCurrentLocation();
-                //}, 5000);
+                }, 10000);
             },
         });
 
