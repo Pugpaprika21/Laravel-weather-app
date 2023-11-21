@@ -1,0 +1,18 @@
+.navbar-nav li {
+    border-bottom: 0px solid var(--navbar-color);
+    box-sizing: border-box;
+}
+
+.navbar-nav li:hover {
+    border-bottom: 3px solid var(--navbar-color);
+}
+
+.navbar-bg {
+    background-color: rgb(232, 165, 41);
+    --navbar-color: white;
+}
+
+.navbar-brand,
+.navbar-text {
+    color: white;
+}

@@ -22,3 +22,5 @@ php artisan migrate:refresh ล้างข้อมูล เเละสร้
 php artisan make:request [TestRequest] สร้าง validate
 php artisan make:resource [TestResource] สร้าง resource
 
+php artisan make:component [TestComponent] สร้าง component
+
