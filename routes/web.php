@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\WeatherController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,6 +14,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/weather/home', function () {
-    return view('weather-home');
+Route::controller(WeatherController::class)->prefix('weather')->as('weather.')->group(function () {
+    Route::get('home', 'home')->name('weather.home');
+    Route::get('api/load-weather-environment', 'loadWeatherEnvironment');
+    Route::post('api/save-weather', 'saveWeather');
 });
