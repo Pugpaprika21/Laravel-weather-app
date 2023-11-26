@@ -65,7 +65,19 @@ const app = createApp({
                     })
                 )
                 .then((res) => {
-                    console.log(res);
+                    if (res.status == 200) {
+                        console.log(res.data.Data.Message);
+                    }
+                })
+                .catch((err) => {
+                    console.error(err);
+                });
+        },
+        showWeathers() {
+            axios
+                .get(this.url.app + "show-weathers")
+                .then((res) => {
+                    console.log(res.data);
                 })
                 .catch((err) => {
                     console.error(err);
@@ -87,9 +99,10 @@ const app = createApp({
         },
     },
     mounted: function() {
-        setInterval(() => {
-            this.loadWeatherEnvironment();
-        }, 3000);
+        this.showWeathers();
+        // setInterval(() => {
+        //     this.loadWeatherEnvironment();
+        // }, 3000);
     },
 });
 

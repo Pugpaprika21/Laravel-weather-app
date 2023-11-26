@@ -18,4 +18,5 @@ Route::controller(WeatherController::class)->prefix('weather')->as('weather.')->
     Route::get('home', 'home')->name('weather.home');
     Route::get('api/load-weather-environment', 'loadWeatherEnvironment');
     Route::post('api/save-weather', 'saveWeather');
+    Route::get('api/show-weathers', 'showWeathers');
 });
