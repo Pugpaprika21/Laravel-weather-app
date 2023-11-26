@@ -3,6 +3,9 @@ body {
     font-family: Mitr, sans-serif;
 }
 
-.card {
+.card,
+.form-control,
+.pagination,
+.form-select {
     border-radius: 0px;
 }

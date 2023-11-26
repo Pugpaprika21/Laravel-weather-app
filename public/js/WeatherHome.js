@@ -6,13 +6,16 @@ const app = createApp({
     data: function() {
         return {
             url: {
-                app: "http://127.0.0.1:8000/weather/api/",
+                app: "http://127.0.0.1:8000/weather/",
             },
             input: {
                 filterCurrentCountry: "Bangkok,TH",
                 filterLimitData: 5,
             },
             request: true,
+            weatherList: [],
+            searchWeather: "",
+            limitWeather: "",
         };
     },
     methods: {
@@ -59,13 +62,14 @@ const app = createApp({
         saveWeather: function(weatherObj) {
             axios
                 .post(
-                    this.url.app + "save-weather",
+                    this.url.app + "api/save-weather",
                     (params = {
                         data: weatherObj,
                     })
                 )
                 .then((res) => {
                     if (res.status == 200) {
+                        this.showWeathers();
                         console.log(res.data.Data.Message);
                     }
                 })
@@ -73,11 +77,15 @@ const app = createApp({
                     console.error(err);
                 });
         },
-        showWeathers() {
+        showWeathers: function() {
             axios
-                .get(this.url.app + "show-weathers")
+                .get(this.url.app + "api/show-weathers")
                 .then((res) => {
-                    console.log(res.data);
+                    if (res.status == 200) {
+                        this.weatherList = res.data.data;
+                        console.log(res.data.data);
+                    }
+
                 })
                 .catch((err) => {
                     console.error(err);
@@ -86,7 +94,7 @@ const app = createApp({
         loadWeatherEnvironment: function() {
             if (this.request) {
                 axios
-                    .get(this.url.app + "load-weather-environment")
+                    .get(this.url.app + "api/load-weather-environment")
                     .then((res) => {
                         if (res.status == 200) {
                             this.getCurrentLocation(res.data.data.api);
@@ -97,17 +105,21 @@ const app = createApp({
                     });
             }
         },
+        submitfilterWhereWeather: function() {
+            let searchWeather = this.searchWeather ? `&searchWeather=${this.searchWeather}` : "";
+            let limitWeather = this.limitWeather ? `&limitWeather=${this.limitWeather}` : "";
+            window.location.href = this.url.app + "home?fs=Y" + searchWeather + limitWeather;
+        }
     },
     mounted: function() {
-        this.showWeathers();
-        // setInterval(() => {
-        //     this.loadWeatherEnvironment();
-        // }, 3000);
+        setInterval(() => {
+            this.loadWeatherEnvironment();
+        }, 3000);
     },
 });
 
 if (element) {
     app.mount("#" + element.id);
 } else {
-    console.log("components 'WeatherHome' not run..");
+    console.log("components not run..");
 }

@@ -7,23 +7,32 @@ use App\Http\Resources\WeatherResource;
 use App\Models\Weather;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class WeatherController extends Controller
 {
-    public function home()
+    public function home(): View
     {
-        return view('weather-home');
+        $weather = new Weather();
+
+        $limit = request()->query('limitWeather', 5);
+        $search = request()->query('searchWeather', '');
+
+        $rsqWeatherSelected = $weather::select('id', 'weather_main')->distinct('weather_main')->orderBy('weather_main', 'asc')->get();
+
+        $rsqWeathers = $weather::select('lon', 'lat', 'weather_main', 'weather_description', 'sys_country', 'city_name')
+            ->when($search, function ($query, $search) {
+                return $query->where('weather_main', 'LIKE', "%{$search}%");
+            })
+            ->orderBy('id')
+            ->paginate($limit);
+
+        return view('weather-home', compact('rsqWeathers', 'rsqWeatherSelected'));
     }
 
     public function loadWeatherEnvironment(Request $request): JsonResponse
     {
-        // 31d3e799f96f9bd02f7d6782a0a484d9
-        return response()->json([
-            'data' => [
-                'api' => '937feb80d0e6d400030171095c97a18a',
-                'active' => true,
-            ]
-        ]);
+        return response()->json(['data' => ['api' => env('API_KEY'), 'active' => true,]]);
     }
 
     public function saveWeather(Request $request): JsonResponse
@@ -74,11 +83,11 @@ class WeatherController extends Controller
     {
         $perPage = 5;
         $weather = new Weather();
-    
+
         $rsqWeathers = $weather::select('lon', 'lat', 'weather_main', 'weather_description', 'sys_country', 'city_name')
             ->orderBy('id')
             ->paginate($perPage);
-    
+
         if ($rsqWeathers->count() > 0) {
             return response()->json(new WeatherResource($rsqWeathers), 200);
         }
